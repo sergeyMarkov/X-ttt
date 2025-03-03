@@ -111,8 +111,8 @@ section#TTT_game{
 	#game_stat {
 		background: #eee;
 		margin: 10px;
-		width: 300px;
-		height: 90px;
+		min-height: 58px;
+		margin-bottom: 12px;
 		vertical-align: middle;
 		text-align: center;
 		padding-top: 10px;
@@ -134,14 +134,28 @@ section#TTT_game{
 		table {
 			background: #fff;
 			margin: 10px;
+			width: 100%;
+
+			&.disabled {
+				background: gray;
+				td:hover {
+					background: transparent;
+				}
+			}
+		}
+
+		tr {
+			display: flex;
+			width: 100%;
 		}
 
 		td {
-			width: 130px;
-			height: 130px;
-
+			aspect-ratio: 1 / 1;
+			width: calc(100% / 3);
+			flex: 1;
 			vertical-align: middle;
 			text-align: center;
+			position: relative;
 
 			&:hover{
 				background: #ff0;
@@ -150,6 +164,15 @@ section#TTT_game{
 			&.win {
 				background: #f00;
 			}
+
+		}
+
+		td div {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			height: 100%;
+			width: 100%;
 		}
 
 		.vbrd {
