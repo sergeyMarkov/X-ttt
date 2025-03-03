@@ -2,10 +2,21 @@ import React, {Component} from 'react'
 
 export default class SetName extends Component {
 
+	handleInputChange(e) {
+        this.setState({ name: e.target.value });
+    };
+
+    saveName(e) {
+        const { name } = this.state;
+        const { onSetName } = this.props;
+        onSetName(name.trim());
+    };
+
 	constructor (props) {
 		super(props)
-
-		this.state = {}
+		this.state = {
+			name: ''	
+		}
 	}
 
 //	------------------------	------------------------	------------------------
@@ -18,24 +29,15 @@ export default class SetName extends Component {
 
 				<div ref='nameHolder' className='input_holder left'>
 					<label>Name </label>
-					<input ref='name' type='text' className='input name' placeholder='Name' />
+					<input type='text' className='input name' placeholder='Name' value={this.state.name} onChange={(e) => this.handleInputChange(e)} />
 				</div>
 
 
-				<button type='submit' onClick={this.saveName.bind(this)} className='button'><span>SAVE <span className='fa fa-caret-right'></span></span></button>
+				<button type='submit' onClick={(e) =>this.saveName(e)} className='button'><span>SAVE <span className='fa fa-caret-right'></span></span></button>
 
 			</div>
 		)
 	}
 
-//	------------------------	------------------------	------------------------
-
-	saveName (e) {
-		// const { name } = this.refs
-		// const { onSetName } = this.props
-		// onSetName(name.value.trim())
-
-		this.props.onSetName(this.refs.name.value.trim())
-	}
 
 }

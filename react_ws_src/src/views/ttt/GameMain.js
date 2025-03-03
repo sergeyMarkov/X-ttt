@@ -7,80 +7,55 @@ import TweenMax from 'gsap'
 import rand_arr_elem from '../../helpers/rand_arr_elem'
 import rand_to_fro from '../../helpers/rand_to_fro'
 
+import { winSets } from '../../constants/winSets'
+import { CONNECTING, GAME_STAT, OPPONENT_TURN, WAITING_OPPONENT, YOUR_TURN } from '../../constants/en'
+
 export default class SetName extends Component {
 
-	constructor (props) {
-		super(props)
+	constructor(props) {
+		super(props);
+		
+		const isLive = this.props.game_type === 'live';
 
-		this.win_sets = [
-			['c1', 'c2', 'c3'],
-			['c4', 'c5', 'c6'],
-			['c7', 'c8', 'c9'],
+		this.state = {
+		  cell_vals: {},
+		  next_turn_ply: true,
+		  game_play: !isLive,
+		  game_stat: isLive ? WAITING_OPPONENT : GAME_STAT.START_GAME
+		};
 
-			['c1', 'c4', 'c7'],
-			['c2', 'c5', 'c8'],
-			['c3', 'c6', 'c9'],
-
-			['c1', 'c5', 'c9'],
-			['c3', 'c5', 'c7']
-		]
-
-
-		if (this.props.game_type != 'live')
-			this.state = {
-				cell_vals: {},
-				next_turn_ply: true,
-				game_play: true,
-				game_stat: 'Start game'
-			}
-		else {
-			this.sock_start()
-
-			this.state = {
-				cell_vals: {},
-				next_turn_ply: true,
-				game_play: false,
-				game_stat: 'Connecting'
-			}
-		}
-	}
+	  }
 
 //	------------------------	------------------------	------------------------
 
 	componentDidMount () {
+		this.setupSocket();
+		// animate game elements
     	TweenMax.from('#game_stat', 1, {display: 'none', opacity: 0, scaleX:0, scaleY:0, ease: Power4.easeIn})
     	TweenMax.from('#game_board', 1, {display: 'none', opacity: 0, x:-200, y:-200, scaleX:0, scaleY:0, ease: Power4.easeIn})
 	}
 
 //	------------------------	------------------------	------------------------
-//	------------------------	------------------------	------------------------
 
-	sock_start () {
+	setupSocket () {
+		if (this.props.game_type !== 'live') return;
 
 		this.socket = io(app.settings.ws_conf.loc.SOCKET__io.u);
 
-		this.socket.on('connect', function(data) { 
-			// console.log('socket connected', data)
-
+		this.socket.on('connect', (data) => { 
 			this.socket.emit('new player', { name: app.settings.curr_user.name });
+		})
 
-		}.bind(this));
-
-		this.socket.on('pair_players', function(data) { 
-			// console.log('paired with ', data)
-
+		this.socket.on('pair_players', (data) => { 
 			this.setState({
 				next_turn_ply: data.mode=='m',
 				game_play: true,
 				game_stat: 'Playing with ' + data.opp.name
 			})
 
-		}.bind(this));
-
+		})
 
 		this.socket.on('opp_turn', this.turn_opp_live.bind(this));
-
-
 
 	}
 
@@ -88,8 +63,9 @@ export default class SetName extends Component {
 //	------------------------	------------------------	------------------------
 
 	componentWillUnmount () {
-
-		this.socket && this.socket.disconnect();
+		if (this.socket) {
+			this.socket.disconnect();
+		}
 	}
 
 //	------------------------	------------------------	------------------------
@@ -105,43 +81,55 @@ export default class SetName extends Component {
 
 //	------------------------	------------------------	------------------------
 
+	setCellClassName (i, j) {
+		const cellId = i * 3 + j + 1;
+		let css = ''
+    	if (cellId === 2 || cellId === 5 || cellId === 8) { css += 'vbrd' } 
+		if (cellId === 4 || cellId === 5 || cellId === 6) { css += ' hbrd' }
+    	return css;
+  	}
+
+
+//	------------------------	------------------------	------------------------
+
 	render () {
-		const { cell_vals } = this.state
-		// console.log(cell_vals)
+		const { game_stat, game_play, next_turn_ply } = this.state
 
 		return (
-			<div id='GameMain'>
-
+			<div id="GameMain">
 				<h1>Play {this.props.game_type}</h1>
 
 				<div id="game_stat">
-					<div id="game_stat_msg">{this.state.game_stat}</div>
-					{this.state.game_play && <div id="game_turn_msg">{this.state.next_turn_ply ? 'Your turn' : 'Opponent turn'}</div>}
+					<div id="game_stat_msg">{game_stat}</div>
+					{game_play && <div id="game_turn_msg">{next_turn_ply ? YOUR_TURN : OPPONENT_TURN}</div>}
 				</div>
 
 				<div id="game_board">
-					<table>
+					<table className={(game_stat === WAITING_OPPONENT || !next_turn_ply || game_stat === CONNECTING) ? 'disabled' : '' }>
 					<tbody>
-						<tr>
-							<td id='game_board-c1' ref='c1' onClick={this.click_cell.bind(this)}> {this.cell_cont('c1')} </td>
-							<td id='game_board-c2' ref='c2' onClick={this.click_cell.bind(this)} className="vbrd"> {this.cell_cont('c2')} </td>
-							<td id='game_board-c3' ref='c3' onClick={this.click_cell.bind(this)}> {this.cell_cont('c3')} </td>
-						</tr>
-						<tr>
-							<td id='game_board-c4' ref='c4' onClick={this.click_cell.bind(this)} className="hbrd"> {this.cell_cont('c4')} </td>
-							<td id='game_board-c5' ref='c5' onClick={this.click_cell.bind(this)} className="vbrd hbrd"> {this.cell_cont('c5')} </td>
-							<td id='game_board-c6' ref='c6' onClick={this.click_cell.bind(this)} className="hbrd"> {this.cell_cont('c6')} </td>
-						</tr>
-						<tr>
-							<td id='game_board-c7' ref='c7' onClick={this.click_cell.bind(this)}> {this.cell_cont('c7')} </td>
-							<td id='game_board-c8' ref='c8' onClick={this.click_cell.bind(this)} className="vbrd"> {this.cell_cont('c8')} </td>
-							<td id='game_board-c9' ref='c9' onClick={this.click_cell.bind(this)}> {this.cell_cont('c9')} </td>
-						</tr>
+						{Array.from({ length: 3 }, (_, i) => (
+                			<tr key={i}>
+                  				{Array.from({ length: 3 }, (_, j) => {
+                    				const cellId = `c${i * 3 + j + 1}`;
+                    				return (
+                      					<td
+                        					key={cellId}
+                        					id={`game_board-${cellId}`}
+                        					ref={cellId}
+                        					onClick={(e) => this.click_cell(e)}
+                        					className={this.setCellClassName(i, j)}
+                      					>{this.cell_cont(cellId)}</td>
+                    				)
+                  				})}
+                			</tr>
+              			))}
 					</tbody>
 					</table>
 				</div>
 
-				<button type='submit' onClick={this.end_game.bind(this)} className='button'><span>End Game <span className='fa fa-caret-right'></span></span></button>
+				<button type='submit' onClick={this.end_game.bind(this)} className='button'>
+					<span>End Game <span className='fa fa-caret-right'></span></span>
+				</button>
 
 			</div>
 		)
@@ -151,12 +139,10 @@ export default class SetName extends Component {
 //	------------------------	------------------------	------------------------
 
 	click_cell (e) {
-		// console.log(e.currentTarget.id.substr(11))
-		// console.log(e.currentTarget)
-
 		if (!this.state.next_turn_ply || !this.state.game_play) return
 
-		const cell_id = e.currentTarget.id.substr(11)
+		const cell_id = e.currentTarget.id.replace("game_board-", "")
+		
 		if (this.state.cell_vals[cell_id]) return
 
 		if (this.props.game_type != 'live')
@@ -176,14 +162,6 @@ export default class SetName extends Component {
 
 		TweenMax.from(this.refs[cell_id], 0.7, {opacity: 0, scaleX:0, scaleY:0, ease: Power4.easeOut})
 
-
-		// this.setState({
-		// 	cell_vals: cell_vals,
-		// 	next_turn_ply: false
-		// })
-
-		// setTimeout(this.turn_comp.bind(this), rand_to_fro(500, 1000));
-
 		this.state.cell_vals = cell_vals
 
 		this.check_turn()
@@ -196,21 +174,14 @@ export default class SetName extends Component {
 		let { cell_vals } = this.state
 		let empty_cells_arr = []
 
-
-		for (let i=1; i<=9; i++) 
+		for (let i=1; i<=9; i++)  {
 			!cell_vals['c'+i] && empty_cells_arr.push('c'+i)
-		// console.log(cell_vals, empty_cells_arr, rand_arr_elem(empty_cells_arr))
+		}
 
 		const c = rand_arr_elem(empty_cells_arr)
 		cell_vals[c] = 'o'
 
 		TweenMax.from(this.refs[c], 0.7, {opacity: 0, scaleX:0, scaleY:0, ease: Power4.easeOut})
-
-
-		// this.setState({
-		// 	cell_vals: cell_vals,
-		// 	next_turn_ply: true
-		// })
 
 		this.state.cell_vals = cell_vals
 
@@ -231,13 +202,6 @@ export default class SetName extends Component {
 
 		this.socket.emit('ply_turn', { cell_id: cell_id });
 
-		// this.setState({
-		// 	cell_vals: cell_vals,
-		// 	next_turn_ply: false
-		// })
-
-		// setTimeout(this.turn_comp.bind(this), rand_to_fro(500, 1000));
-
 		this.state.cell_vals = cell_vals
 
 		this.check_turn()
@@ -248,19 +212,11 @@ export default class SetName extends Component {
 	turn_opp_live (data) {
 
 		let { cell_vals } = this.state
-		let empty_cells_arr = []
-
 
 		const c = data.cell_id
 		cell_vals[c] = 'o'
 
 		TweenMax.from(this.refs[c], 0.7, {opacity: 0, scaleX:0, scaleY:0, ease: Power4.easeOut})
-
-
-		// this.setState({
-		// 	cell_vals: cell_vals,
-		// 	next_turn_ply: true
-		// })
 
 		this.state.cell_vals = cell_vals
 
@@ -283,17 +239,15 @@ export default class SetName extends Component {
 			this.state.game_stat = 'Play'
 
 
-		for (let i=0; !win && i<this.win_sets.length; i++) {
-			set = this.win_sets[i]
-			if (cell_vals[set[0]] && cell_vals[set[0]]==cell_vals[set[1]] && cell_vals[set[0]]==cell_vals[set[2]])
+		for (let i=0; !win && i < winSets.length; i++) {
+			set = winSets[i]
+			if (cell_vals[set[0]] && cell_vals[set[0]] == cell_vals[set[1]] && cell_vals[set[0]] == cell_vals[set[2]])
 				win = true
 		}
 
-
-		for (let i=1; i<=9; i++) 
+		for (let i=1; i<=9; i++) {
 			!cell_vals['c'+i] && (fin = false)
-
-		// win && console.log('win set: ', set)
+		}
 
 		if (win) {
 		
@@ -305,7 +259,7 @@ export default class SetName extends Component {
 			TweenMax.from('td.win', 1, {opacity: 0, ease: Linear.easeIn})
 
 			this.setState({
-				game_stat: (cell_vals[set[0]]=='x'?'You':'Opponent')+' win',
+				game_stat: (cell_vals[set[0]]=='x'? GAME_STAT.YOU_WIN : GAME_STAT.OPPONENT_WIN),
 				game_play: false
 			})
 
@@ -314,7 +268,7 @@ export default class SetName extends Component {
 		} else if (fin) {
 		
 			this.setState({
-				game_stat: 'Draw',
+				game_stat: GAME_STAT.DRAW,
 				game_play: false
 			})
 
@@ -333,8 +287,9 @@ export default class SetName extends Component {
 //	------------------------	------------------------	------------------------
 
 	end_game () {
-		this.socket && this.socket.disconnect();
-
+		if (this.socket) {
+			this.socket.disconnect();
+		}
 		this.props.onEndGame()
 	}
 
