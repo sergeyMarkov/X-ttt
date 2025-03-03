@@ -11,11 +11,7 @@ import Main from './views/Main'
 
 import Ttt from './views/ttt/Ttt'
 
-import Txt_page from './views/pages/Txt_page'
-import PopUp_page from './views/pages/PopUp_page'
-
-import Contact from './views/pages/Contact'
-import ErrorPage from './views/pages/ErrorPage'
+import { Txt_page, PopUp_page, Contact, ErrorPage } from './views/pages'
 
 import prep_env from './models/prep_env'
 
