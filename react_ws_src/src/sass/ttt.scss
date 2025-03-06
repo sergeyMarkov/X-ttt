@@ -128,6 +128,13 @@ section#TTT_game{
 		}
 	}
 
+	#scores {
+		background-color: #ebe6f1;
+		margin-top: 8px;
+		th, td {
+			padding: 8px;
+		}
+	}
 	#game_board {
 			// padding: 10px;
 

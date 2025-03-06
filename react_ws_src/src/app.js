@@ -1,7 +1,8 @@
 import React from 'react'
 import app from 'ampersand-app'
 import { render } from 'react-dom'
-import { Router, Route, Redirect, IndexRoute, browserHistory  } from 'react-router'
+import { Router, Route, IndexRoute, browserHistory  } from 'react-router'
+import { Provider } from 'react-redux'
 import { createHistory, useBasename } from 'history'
 import ga from 'react-ga'
 
@@ -15,10 +16,13 @@ import { Txt_page, PopUp_page, Contact, ErrorPage } from './views/pages'
 
 import prep_env from './models/prep_env'
 
+import store from './redux'
+
 
 
 let renderSite = function () {
 	return render((
+		<Provider store={store}>
 		<Router history={browserHistory}>
 			<Route path='/' component={Main}>
 
@@ -36,6 +40,7 @@ let renderSite = function () {
 				<Route path="*" components={{mainContent: ErrorPage}} />
 			</Route>
 		</Router>
+		</Provider>
 	), document.getElementById('root'))
 }
 

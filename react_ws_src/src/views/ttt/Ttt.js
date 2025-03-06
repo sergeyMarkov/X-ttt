@@ -1,110 +1,63 @@
 import React, { Component} from 'react'
-import { Link } from 'react-router'
-
+import { connect } from 'react-redux'
+import { SET_USER_NAME, LOGOUT, SET_GAME_TYPE, SET_GAME_STEP } from '../../redux'
 import SetName from './SetName'
 import SetGameType from './SetGameType'
-
 import GameMain from './GameMain'
 
-export default class Ttt extends Component {
+const setUserName = (name) => ({ type: SET_USER_NAME, payload: name });
+const logout = () => ({ type: LOGOUT });
+const setGameType = (gameType) => ({ type: SET_GAME_TYPE, payload: gameType });
+const setGameStep = (step) => ({ type: SET_GAME_STEP, payload: step });
 
-	constructor (props) {
-		super(props)
 
-		this.state = {
-			game_step: this.set_game_step()
-		}
-	}
+class Ttt extends Component {
 
-//	------------------------	------------------------	------------------------
+  render() {
 
-	render () {
+    const { game_step, curr_user, game_type, setUserName, logout, setGameType, setGameStep } = this.props;
 
-		const {game_step} = this.state
+    return (
+      <section id="TTT_game">
+        <div id="page-container">
 
-		console.log(game_step)
+          {game_step === "set_name" && <SetName onSetName={setUserName} />}
 
-		return (
-			<section id='TTT_game'>
-				<div id='page-container'>
-					{game_step == 'set_name' && <SetName 
-														onSetName={this.saveUserName.bind(this)} 
-												/>}
+          {game_step !== "set_name" && (
+            <div>
+				      Welcome, <strong>{curr_user.name}</strong>&nbsp;<button onClick={logout}>Logout</button><br />        
+				      {(curr_user.losses || curr_user.wins || curr_user.draws) && (<div>
+				      <table id="scores">
+        			<thead><tr><th>Wins</th><th>Losses</th><th>Draws</th></tr></thead>
+        		  <tbody><tr><td>{curr_user.wins || '0'}</td><td>{curr_user.losses || '0'}</td><td>{curr_user.draws || '0'}</td></tr></tbody>
+			        </table>
+			        </div>)}
+            </div>
+          )}
 
-					{game_step != 'set_name' && 
-						<div>
-							<h2>Welcome, {app.settings.curr_user.name}</h2>
-						</div>
-					}
+          {game_step === "set_game_type" && <SetGameType onSetType={setGameType} />}
+          {game_step === "start_game" && <GameMain game_type={game_type} onEndGame={() => setGameStep("set_game_type")} />}
 
-					{game_step == 'set_game_type' && <SetGameType 
-														onSetType={this.saveGameType.bind(this)} 
-													/>}
-					{game_step == 'start_game' && <GameMain 
-														game_type={this.state.game_type}
-														onEndGame={this.gameEnd.bind(this)} 
-													/>}
-
-				</div>
-			</section>
-		)
-	}
-
-//	------------------------	------------------------	------------------------
-
-	saveUserName (n) {
-		app.settings.curr_user = {}
-		app.settings.curr_user.name = n
-
-		this.upd_game_step()
-	}
-
-//	------------------------	------------------------	------------------------
-
-	saveGameType (t) {
-		this.state.game_type = t
-
-		this.upd_game_step()
-	}
-
-//	------------------------	------------------------	------------------------
-
-	gameEnd (t) {
-		this.state.game_type = null
-
-		this.upd_game_step()
-	}
-
-//	------------------------	------------------------	------------------------
-//	------------------------	------------------------	------------------------
-
-	upd_game_step () {
-
-		this.setState({
-			game_step: this.set_game_step()
-		})
-	}
-
-//	------------------------	------------------------	------------------------
-
-	set_game_step () {
-
-		if (!app.settings.curr_user || !app.settings.curr_user.name)
-			return 'set_name'
-		else if (!this.state.game_type)
-			return 'set_game_type'
-		else
-			return 'start_game'
-	}
-
+        </div>
+      </section>
+    );
+  }
 }
 
-//	------------------------	------------------------	------------------------
+// Map Redux state to component props
+const mapStateToProps = (state) => ({
+  game_step: state.game_step,
+  game_type: state.game_type,
+  curr_user: state.curr_user,
+});
 
-Ttt.propTypes = {
-	params: React.PropTypes.any
-}
+// Map dispatch actions to props
+const mapDispatchToProps = {
+  setUserName,
+  logout,
+  setGameType,
+  setGameStep,
+};
 
-Ttt.contextTypes = {
-  router: React.PropTypes.object.isRequired
-}
+// Connect Redux to React Component
+export default connect(mapStateToProps, mapDispatchToProps)(Ttt);

@@ -1,6 +1,8 @@
 import React, {Component} from 'react'
+import { connect } from 'react-redux'
+import { SET_GAME_TYPE } from '../../redux'
 
-export default class SetGameType extends Component {
+class SetGameType extends Component {
 
 
 	constructor(props) {
@@ -25,7 +27,7 @@ export default class SetGameType extends Component {
 
 				<h1>Choose game type</h1>
 
-				<div style={{ display: 'flex', gap: '20px', justifyContent: 'center' }}>
+				<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 
 					<button type='submit' onClick={this.selTypeLive} className='button long'>
 						<span>Live against another player <span className='fa fa-caret-right'></span></span>
@@ -43,3 +45,9 @@ export default class SetGameType extends Component {
 
 
 }
+
+const mapDispatchToProps = (dispatch) => ({
+	onSetType: (gameType) => dispatch({ type: SET_GAME_TYPE, payload: gameType }),
+});
+
+export default connect(null, mapDispatchToProps)(SetGameType);

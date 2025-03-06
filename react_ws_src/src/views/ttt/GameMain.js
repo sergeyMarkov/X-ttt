@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
-
+import { connect } from 'react-redux'
+import { SET_CELL_VALUE, SET_GAME_STAT, SET_GAME_TYPE, SET_WIN, SET_FAIL } from '../../redux'
 import io from 'socket.io-client'
 
 import TweenMax from 'gsap'
@@ -10,13 +11,13 @@ import rand_to_fro from '../../helpers/rand_to_fro'
 import { winSets } from '../../constants/winSets'
 import { CONNECTING, GAME_STAT, OPPONENT_TURN, WAITING_OPPONENT, YOUR_TURN } from '../../constants/en'
 
-export default class SetName extends Component {
+class SetName extends Component {
 
 	constructor(props) {
-		super(props);
-		
-		const isLive = this.props.game_type === 'live';
+		super(props);	
 
+		const isLive = this.props.game_type && this.props.game_type === 'live';
+		
 		this.state = {
 		  cell_vals: {},
 		  next_turn_ply: true,
@@ -33,20 +34,26 @@ export default class SetName extends Component {
 		// animate game elements
     	TweenMax.from('#game_stat', 1, {display: 'none', opacity: 0, scaleX:0, scaleY:0, ease: Power4.easeIn})
     	TweenMax.from('#game_board', 1, {display: 'none', opacity: 0, x:-200, y:-200, scaleX:0, scaleY:0, ease: Power4.easeIn})
+		this.props.setGameStat(this.state.game_stat);
 	}
 
 //	------------------------	------------------------	------------------------
 
 	setupSocket () {
+
+		const { curr_user } = this.props;
+
 		if (this.props.game_type !== 'live') return;
 
 		this.socket = io(app.settings.ws_conf.loc.SOCKET__io.u);
 
-		this.socket.on('connect', (data) => { 
-			this.socket.emit('new player', { name: app.settings.curr_user.name });
+		this.socket.on('connect', () => { 
+			// console.log('connect with new player', curr_user);
+			this.socket.emit('new player', { name: curr_user.name });
 		})
 
 		this.socket.on('pair_players', (data) => { 
+			// console.log('pair_players', data)
 			this.setState({
 				next_turn_ply: data.mode=='m',
 				game_play: true,
@@ -162,6 +169,8 @@ export default class SetName extends Component {
 
 		TweenMax.from(this.refs[cell_id], 0.7, {opacity: 0, scaleX:0, scaleY:0, ease: Power4.easeOut})
 
+		this.props.setCellValue(cell_vals);
+
 		this.state.cell_vals = cell_vals
 
 		this.check_turn()
@@ -183,6 +192,8 @@ export default class SetName extends Component {
 
 		TweenMax.from(this.refs[c], 0.7, {opacity: 0, scaleX:0, scaleY:0, ease: Power4.easeOut})
 
+		this.props.setCellValue(cell_vals);
+
 		this.state.cell_vals = cell_vals
 
 		this.check_turn()
@@ -201,6 +212,8 @@ export default class SetName extends Component {
 		TweenMax.from(this.refs[cell_id], 0.7, {opacity: 0, scaleX:0, scaleY:0, ease: Power4.easeOut})
 
 		this.socket.emit('ply_turn', { cell_id: cell_id });
+
+		this.props.setCellValue(cell_vals);
 
 		this.state.cell_vals = cell_vals
 
@@ -258,8 +271,16 @@ export default class SetName extends Component {
 			TweenMax.killAll(true)
 			TweenMax.from('td.win', 1, {opacity: 0, ease: Linear.easeIn})
 
+			if (cell_vals[set[0]] == 'x') {
+				this.props.setGameStat(GAME_STAT.YOU_WIN)
+				this.props.setWin()
+			} else {
+				this.props.setGameStat(GAME_STAT.OPPONENT_WIN)
+				this.props.setFail()
+			}
+
 			this.setState({
-				game_stat: (cell_vals[set[0]]=='x'? GAME_STAT.YOU_WIN : GAME_STAT.OPPONENT_WIN),
+				game_stat: cell_vals[set[0]] == 'x' ? GAME_STAT.YOU_WIN : GAME_STAT.OPPONENT_WIN,
 				game_play: false
 			})
 
@@ -271,6 +292,8 @@ export default class SetName extends Component {
 				game_stat: GAME_STAT.DRAW,
 				game_play: false
 			})
+
+			this.props.setGameStat(GAME_STAT.DRAW)
 
 			this.socket && this.socket.disconnect();
 
@@ -291,8 +314,25 @@ export default class SetName extends Component {
 			this.socket.disconnect();
 		}
 		this.props.onEndGame()
+		this.props.setGameType('')
 	}
 
-
-
 }
+
+const mapStateToProps = (state) => ({
+	game_step: state.game_step,
+	game_type: state.game_type,
+	curr_user: state.curr_user,
+});
+
+
+const mapDispatchToProps = dispatch => ({
+	setCellValue: (cell_vals) => dispatch({ type: SET_CELL_VALUE, payload: cell_vals }),
+	setGameStat: (gameStat) => dispatch({ type: SET_GAME_STAT, payload: gameStat }),
+	setGameType: (gameType) => dispatch({ type: SET_GAME_TYPE, payload: gameType }),
+	setWin: () => dispatch({ type: SET_WIN }),
+	setFail: () => dispatch({ type: SET_FAIL })
+});
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(SetName);

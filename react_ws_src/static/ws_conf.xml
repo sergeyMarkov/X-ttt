@@ -71,14 +71,9 @@
 		<home		pg_name="Home">
 			<txt>
 			<![CDATA[
-				<div>This is a simple X Tic Tac Toe multiplayer demo game. It's built with React.js and Node.js.</div>
+				<div>This is a simple X Tic Tac Toe multiplayer demo game.</div>
 				
-				<div>
-				view source at  <a href='https://github.com/xims/X-ttt'>github.com/xims/X-ttt</a></div>
-
-				<br/>
-				<h4>For demonstration purposes.</h4>
-				<br/>
+				
 
 			]]>
 			</txt>
