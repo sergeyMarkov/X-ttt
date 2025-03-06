@@ -1,0 +1,37 @@
+{"timestamp":"2025-03-06T12:36:57.967Z","actionType":"SET_GAME_TYPE","payload":"comp"}
+{"timestamp":"2025-03-06T12:36:57.970Z","actionType":"SET_GAME_STAT","payload":"Start game"}
+{"timestamp":"2025-03-06T12:37:00.335Z","actionType":"SET_CELL_VALUE","payload":{"c7":"x"}}
+{"timestamp":"2025-03-06T12:37:01.299Z","actionType":"SET_CELL_VALUE","payload":{"c7":"x","c8":"o"}}
+{"timestamp":"2025-03-06T12:37:02.959Z","actionType":"SET_CELL_VALUE","payload":{"c7":"x","c8":"o","c5":"x"}}
+{"timestamp":"2025-03-06T12:37:03.857Z","actionType":"SET_CELL_VALUE","payload":{"c7":"x","c8":"o","c5":"x","c4":"o"}}
+{"timestamp":"2025-03-06T12:37:04.911Z","actionType":"SET_CELL_VALUE","payload":{"c7":"x","c8":"o","c5":"x","c4":"o","c2":"x"}}
+{"timestamp":"2025-03-06T12:37:05.798Z","actionType":"SET_CELL_VALUE","payload":{"c7":"x","c8":"o","c5":"x","c4":"o","c2":"x","c1":"o"}}
+{"timestamp":"2025-03-06T12:37:06.849Z","actionType":"SET_CELL_VALUE","payload":{"c7":"x","c8":"o","c5":"x","c4":"o","c2":"x","c1":"o","c3":"x"}}
+{"timestamp":"2025-03-06T12:37:06.851Z","actionType":"SET_GAME_STAT","payload":"You win"}
+{"timestamp":"2025-03-06T12:37:06.852Z","actionType":"SET_WIN"}
+{"timestamp":"2025-03-06T12:37:10.261Z","actionType":"SET_GAME_STEP","payload":"set_game_type"}
+{"timestamp":"2025-03-06T12:37:10.262Z","actionType":"SET_GAME_TYPE","payload":""}
+{"timestamp":"2025-03-06T12:39:40.306Z","actionType":"LOGOUT"}
+{"timestamp":"2025-03-06T12:39:44.637Z","actionType":"SET_USER_NAME","payload":"admin"}
+{"timestamp":"2025-03-06T12:40:17.746Z","actionType":"LOGOUT"}
+{"timestamp":"2025-03-06T12:51:01.441Z","actionType":"SET_USER_NAME","payload":"111"}
+{"timestamp":"2025-03-06T12:51:03.506Z","actionType":"SET_GAME_TYPE","payload":"comp"}
+{"timestamp":"2025-03-06T12:51:03.513Z","actionType":"SET_GAME_STAT","payload":"Start game"}
+{"timestamp":"2025-03-06T12:51:05.565Z","actionType":"SET_CELL_VALUE","payload":{"c2":"x"}}
+{"timestamp":"2025-03-06T12:51:06.544Z","actionType":"SET_CELL_VALUE","payload":{"c2":"x","c9":"o"}}
+{"timestamp":"2025-03-06T12:51:07.742Z","actionType":"SET_CELL_VALUE","payload":{"c2":"x","c9":"o","c7":"x"}}
+{"timestamp":"2025-03-06T12:51:08.291Z","actionType":"SET_CELL_VALUE","payload":{"c2":"x","c9":"o","c7":"x","c6":"o"}}
+{"timestamp":"2025-03-06T12:51:09.188Z","actionType":"SET_CELL_VALUE","payload":{"c2":"x","c9":"o","c7":"x","c6":"o","c5":"x"}}
+{"timestamp":"2025-03-06T12:51:10.062Z","actionType":"SET_CELL_VALUE","payload":{"c2":"x","c9":"o","c7":"x","c6":"o","c5":"x","c8":"o"}}
+{"timestamp":"2025-03-06T12:51:10.797Z","actionType":"SET_CELL_VALUE","payload":{"c2":"x","c9":"o","c7":"x","c6":"o","c5":"x","c8":"o","c4":"x"}}
+{"timestamp":"2025-03-06T12:51:11.573Z","actionType":"SET_CELL_VALUE","payload":{"c2":"x","c9":"o","c7":"x","c6":"o","c5":"x","c8":"o","c4":"x","c3":"o"}}
+{"timestamp":"2025-03-06T12:51:11.574Z","actionType":"SET_GAME_STAT","payload":"Opponent win"}
+{"timestamp":"2025-03-06T12:51:11.574Z","actionType":"SET_FAIL"}
+{"timestamp":"2025-03-06T12:51:17.895Z","actionType":"SET_GAME_STEP","payload":"set_game_type"}
+{"timestamp":"2025-03-06T12:51:17.896Z","actionType":"SET_GAME_TYPE","payload":""}
+{"timestamp":"2025-03-06T12:51:19.404Z","actionType":"LOGOUT"}
+{"timestamp":"2025-03-06T12:51:20.538Z","actionType":"LOGOUT"}
+{"timestamp":"2025-03-06T12:51:21.059Z","actionType":"LOGOUT"}
+{"timestamp":"2025-03-06T12:51:21.255Z","actionType":"LOGOUT"}
+{"timestamp":"2025-03-06T12:51:21.422Z","actionType":"LOGOUT"}
+{"timestamp":"2025-03-06T12:52:03.497Z","actionType":"LOGOUT"}

@@ -4,6 +4,7 @@ import { SET_USER_NAME, LOGOUT, SET_GAME_TYPE, SET_GAME_STEP } from '../../redux
 import SetName from './SetName'
 import SetGameType from './SetGameType'
 import GameMain from './GameMain'
+import AdminLogs from './AdminLogs'
 
 const setUserName = (name) => ({ type: SET_USER_NAME, payload: name });
 const logout = () => ({ type: LOGOUT });
@@ -38,6 +39,7 @@ class Ttt extends Component {
           {game_step === "set_game_type" && <SetGameType onSetType={setGameType} />}
           {game_step === "start_game" && <GameMain game_type={game_type} onEndGame={() => setGameStep("set_game_type")} />}
 
+          {curr_user.name === "admin" && <AdminLogs/>}
         </div>
       </section>
     );
